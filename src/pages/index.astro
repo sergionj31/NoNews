@@ -1,0 +1,62 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+
+function slugify(text:string) {
+  return text
+    .toString()           // Asegúrate de que sea una cadena
+    .normalize('NFD')     // Normaliza los caracteres especiales
+    .replace(/[\u0300-\u036f]/g, '') // Elimina los acentos
+    .toLowerCase()        // Convierte todo a minúsculas
+    .replace(/[^a-z0-9 -]/g, '') // Elimina caracteres no válidos
+    .replace(/\s+/g, '-')  // Reemplaza los espacios por guiones
+    .replace(/-+/g, '-');  // Elimina guiones consecutivos
+}
+
+const news = await getCollection('news');
+---
+
+<Layout title='No News'>
+	<h1 class="back text-red-600">n</h1>
+	<div class="container flex flex-col gap-5">
+		<div class="flex-1">
+			<h1 class="text-7xl">Welcome to No News</h1>
+			<p class="text-2xl">Your trusted web of news.</p>
+		</div>
+
+		<aside class="news-aside w-3/5">
+			{news.map((article) => (
+			  article.data.urlToImage ? (
+				<a href={`/article/${slugify(article.data.title)}`}>
+				  <div transition:name={`div-${slugify(article.data.title)}`} class="px-6 py-4 rounded overflow-hidden shadow-lg mb-8 hover:scale-102 transition-transform duration-500">
+					<div class="font-bold text-xl mb-2">{article.data.title}</div>
+					<p class="text-gray-700 text-base">
+					  <p>{article.data.description}</p><br />
+					  {article.data.urlToImage && <img class="article-image" src={article.data.urlToImage} alt={article.data.title} />}
+					</p>
+					<p class="opacity-70 py-4">Published at: {article.data.publishedAt}</p>
+				  </div>
+				</a>
+			  ) : null
+			))}
+		</aside>
+	</div>
+</Layout>
+
+<style>
+	.article-image {
+		width: 100%;
+		aspect-ratio: 16/9;
+		object-fit: cover;
+	}
+
+	.back {
+		font-size: 10000%;
+		z-index: -1;
+		position: fixed;
+		top: 25%;
+		left: 80%;
+		transform: translate(-50%, -50%);
+		animation: down 2s;
+	}
+</style>

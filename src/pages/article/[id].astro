@@ -1,0 +1,48 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+import { slugify } from '../../utils/slugify';  // Importa slugify desde utils
+
+export async function getStaticPaths() {
+  const news = await getCollection("news");
+
+  return news.map((article) => ({
+    params: { id: slugify(article.data.title) }, // Genera el slug aquí
+    props: { article }
+  }));
+}
+
+const { article } = Astro.props;
+const { data } = article;
+const { title, description, url, urlToImage, publishedAt, content } = data;
+
+const { Content } = await render(article);
+
+export const prerender = true;
+---
+
+<Layout title={title}>
+  <a href='/' class="hover:underline opacity-70 px-6 py-4">← Volver atrás</a>
+
+  <div transition:name={`div-${slugify(article.data.title)}`} class="container flex flex-col gap-5 px-6 py-6 rounded overflow-hidden shadow-lg mb-8">
+      <h1 class="font-bold text-4xl mb-2">{title}</h1>
+      
+      <div class="flex flex-row gap-8 py-4 mt-4">
+          <div class="w-3/5">
+            <p>{description}</p>
+            <p><strong>Publicado:</strong> {publishedAt}</p><br>
+            <p>{content}</p>
+            <br>
+            <a href={url} target="_blank" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full shadow-lg">Leer más</a>
+          </div>
+          
+          <div class="w-5/5">
+            {urlToImage && <img src={urlToImage} alt={title} />}
+          </div>
+      </div>
+  </div>
+</Layout>
+
+<style>
+  
+</style>

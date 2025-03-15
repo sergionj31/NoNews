@@ -1,0 +1,152 @@
+---
+import './src/styles/global.css' 
+import { ClientRouter } from 'astro:transitions';
+import { getCollection } from 'astro:content';
+
+interface Props {
+  title: string;
+}
+
+function slugify(text: string) {
+  return text
+    .toString()           // Asegúrate de que sea una cadena
+    .normalize('NFD')     // Normaliza los caracteres especiales
+    .replace(/[\u0300-\u036f]/g, '') // Elimina los acentos
+    .toLowerCase()        // Convierte todo a minúsculas
+    .replace(/[^a-z0-9 -]/g, '') // Elimina caracteres no válidos
+    .replace(/\s+/g, '-')  // Reemplaza los espacios por guiones
+    .replace(/-+/g, '-');  // Elimina guiones consecutivos
+}
+
+const news = await getCollection('news');
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/n.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>No News</title>
+		<ClientRouter />
+	</head>
+	<body>
+		<section class="ticker-container">
+			<div class="ticker-wrapper p-2">
+				{news.concat(news).map((article, index) => {
+          // Dividimos cada noticia con puntos
+          const isLast = index === news.length - 1;
+          return (
+            <>
+              <a href={`/article/${slugify(article.data.title)}`} class="ticker-item hover:underline text-xl">
+                {article.data.title}
+              </a>
+              {!isLast && <span class="ticker-separator"></span>} {/* Separador entre noticias */}
+            </>
+          );
+        })}
+			</div>
+		</section>
+		<div class="container p-20">
+			<slot />
+		</div>
+		<footer class="mb-4">
+			<div>
+				<p>&copy; 2025 Sergio Navarro Jarana. Todos los derechos reservados.</p>
+			</div>
+			<div>
+				<a href="https://www.linkedin.com/in/sergio-navarro-jarana-b16986297/?originalSubdomain=es" class="linkedin text-light mx-2">LinkedIn</a>
+				<a href="https://github.com/sergionj31" class="github text-light mx-2">GitHub</a>
+			</div>
+		</footer>
+	</body>
+</html>
+
+<style>
+	html,
+	body {
+		margin: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 1;
+		overflow-x: hidden; /* Elimina el scroll horizontal */
+		overflow-y: scroll;
+	}
+
+	body::-webkit-scrollbar {
+		display: none; /* Oculta la barra de desplazamiento */
+	}
+
+	html {
+		font-family: system-ui, sans-serif;
+		background: #fff;
+		color: #13151a;
+	}
+
+	@keyframes down {
+		0% {
+			top: 15%;
+			opacity: 0.1;
+		}
+		100% {
+			top: 25%;
+			opacity: 1;
+		}
+	}
+
+	.news-aside {
+		width: 100px;
+		height: 500px;
+	}
+
+	@keyframes marquee {
+		from {
+		transform: translateX(0);
+		}
+		to {
+		transform: translateX(-50%);
+		}
+	}
+
+	.ticker-container {
+		overflow: hidden;
+		white-space: nowrap;
+		position: relative;
+		background: #E7000B;
+		color: white;
+		padding: 10px 0;
+	}
+
+	.ticker-item {
+		display: inline-block;
+		padding: 0 30px;
+		font-weight: bold;
+	}
+
+	.ticker-wrapper {
+		display: flex;
+		width: max-content;
+		animation: marquee 120s linear infinite;
+		align-items: center; /* Alinea verticalmente los elementos dentro del flex */
+	}
+
+	.ticker-separator {
+		display: inline-block;
+		width: 10px;
+		height: 10px;
+		background-color: white;
+		border-radius: 50%;
+		margin: 0 15px;
+		vertical-align: middle;
+		align-self: center; /* Asegura que el separador se alinee con el texto */
+	}
+
+	footer {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		text-align: center;  /* Asegura que el texto esté centrado */
+	}
+</style>
