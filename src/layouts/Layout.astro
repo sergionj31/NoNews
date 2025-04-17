@@ -74,10 +74,6 @@ const news = await getCollection('news');
 		overflow-y: scroll;
 	}
 
-	body::-webkit-scrollbar {
-		display: none; /* Oculta la barra de desplazamiento */
-	}
-
 	html {
 		font-family: system-ui, sans-serif;
 		background: #fff;
@@ -102,10 +98,10 @@ const news = await getCollection('news');
 
 	@keyframes marquee {
 		from {
-		transform: translateX(0);
+			transform: translateX(0);
 		}
 		to {
-		transform: translateX(-50%);
+			transform: translateX(-50%);
 		}
 	}
 

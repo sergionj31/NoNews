@@ -17,24 +17,24 @@ const news = await getCollection('news');
 ---
 
 <Layout title='No News'>
-	<h1 class="back text-red-600">n</h1>
-	<div class="container flex flex-col gap-5">
-		<div class="flex-1">
-			<h1 class="text-7xl">Welcome to No News</h1>
-			<p class="text-2xl">Your trusted web of news.</p>
+	<h1 class="back text-red-600 hidden sm:block">n</h1>
+	<div class="container flex flex-col gap-5 sm:px-8">
+		<div class="flex-1 sm:text-left">
+			<h1 class="text-4xl sm:text-4xl lg:text-7xl">Welcome to No News</h1>
+			<p class="sm:text-xl lg:text-2xl">Your trusted web of news.</p>
 		</div>
 
-		<aside class="news-aside w-3/5">
+		<aside class="news-aside w-full sm:w-4/5 lg:w-3/5">
 			{news.map((article) => (
 			  article.data.urlToImage ? (
 				<a href={`/article/${slugify(article.data.title)}`}>
 				  <div transition:name={`div-${slugify(article.data.title)}`} class="px-6 py-4 rounded overflow-hidden shadow-lg mb-8 hover:scale-102 transition-transform duration-500">
-					<div class="font-bold text-xl mb-2">{article.data.title}</div>
-					<p class="text-gray-700 text-base">
+					<div class="font-bold text-lg sm:text-xl mb-2">{article.data.title}</div>
+					<p class="text-gray-700 text-sm sm:text-base">
 					  <p>{article.data.description}</p><br />
 					  {article.data.urlToImage && <img class="article-image" src={article.data.urlToImage} alt={article.data.title} />}
 					</p>
-					<p class="opacity-70 py-4">Published at: {article.data.publishedAt}</p>
+					<p class="opacity-70 py-4 text-xs sm:text-sm">Published at: {article.data.publishedAt}</p>
 				  </div>
 				</a>
 			  ) : null
